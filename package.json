@@ -1,7 +1,7 @@
 {
 	"name": "nwt-linker",
 	"version": "1.0.0",
-	"description": "This is a plugin that converts Bible texts to JW Library links.",
+	"description": "This is a plugin that converts Bible verses to New World Translation Bible links.",
 	"main": "main.js",
 	"style": "styles.css",
 	"scripts": {
@@ -17,6 +17,7 @@
 		"@types/node": "^16.11.6",
 		"builtin-modules": "3.3.0",
 		"esbuild": "^0.25.2",
+		"esbuild-copy-static-files": "^0.1.0",
 		"eslint": "^9.23.0",
 		"globals": "^16.0.0",
 		"obsidian": "latest",

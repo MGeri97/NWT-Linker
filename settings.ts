@@ -1,4 +1,4 @@
-import BibleLinkerPro from "main";
+import NwtLinker from "main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 import * as translations from "translations.json";
 import { moment } from "obsidian";
@@ -7,9 +7,9 @@ const translationsTyped: { [key: string]: { [key: string]: string } } =
 	translations;
 
 export class MainSettingTab extends PluginSettingTab {
-	plugin: BibleLinkerPro;
+	plugin: NwtLinker;
 
-	constructor(app: App, plugin: BibleLinkerPro) {
+	constructor(app: App, plugin: NwtLinker) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -44,16 +44,18 @@ export class MainSettingTab extends PluginSettingTab {
 			.setHeading();
 
 		containerEl.createEl("p", {
-			text: this.getTranslation("CREATED_WITH_LOVE") + " Floydv149",
+			text:
+				this.getTranslation("CREATED_WITH_LOVE") +
+				" Floydv149, MGeri97",
 		});
 		containerEl.createEl("a", {
 			text: this.getTranslation("DOCUMENTATION"),
-			href: "https://github.com/Floydv149/bibleLinkerPro/blob/main/README.md",
+			href: "https://github.com/MGeri97/NWT-Linker/blob/main/README.md",
 		});
 		containerEl.createEl("br");
 		containerEl.createEl("a", {
 			text: this.getTranslation("CHANGELOG"),
-			href: "https://github.com/Floydv149/bibleLinkerPro/blob/main/CHANGELOG.MD",
+			href: "https://github.com/MGeri97/NWT-Linker/blob/main/CHANGELOG.MD",
 		});
 		containerEl.createEl("br");
 		containerEl.createEl("br");
@@ -74,13 +76,13 @@ export class MainSettingTab extends PluginSettingTab {
 					.setValue(
 						this.plugin.settings.pluginLanguage != moment.locale()
 							? this.plugin.settings.pluginLanguage
-							: "/"
+							: "/",
 					)
 					.onChange(async (value) => {
 						if (value === "/") {
 							if (
 								translationsTyped.hasOwnProperty(
-									moment.locale()
+									moment.locale(),
 								)
 							) {
 								this.plugin.settings.pluginLanguage =
@@ -93,7 +95,7 @@ export class MainSettingTab extends PluginSettingTab {
 							await this.plugin.saveSettings();
 						}
 						this.display();
-					})
+					}),
 			);
 
 		new Setting(containerEl)
@@ -105,11 +107,11 @@ export class MainSettingTab extends PluginSettingTab {
 			.setDesc(this.getTranslation("EXPAND_BIBLE_BOOK_NAME_EXAMPLE"))
 			.addToggle((Boolean) =>
 				Boolean.setValue(
-					this.plugin.settings.expandBibleBookName
+					this.plugin.settings.expandBibleBookName,
 				).onChange(async (value) => {
 					this.plugin.settings.expandBibleBookName = value;
 					await this.plugin.saveSettings();
-				})
+				}),
 			);
 
 		new Setting(containerEl)
@@ -120,8 +122,8 @@ export class MainSettingTab extends PluginSettingTab {
 					async (value) => {
 						this.plugin.settings.autoGetLine = value;
 						await this.plugin.saveSettings();
-					}
-				)
+					},
+				),
 			);
 
 		new Setting(containerEl)
@@ -132,8 +134,8 @@ export class MainSettingTab extends PluginSettingTab {
 					async (value) => {
 						this.plugin.settings.autoOpenLink = value;
 						await this.plugin.saveSettings();
-					}
-				)
+					},
+				),
 			);
 
 		new Setting(containerEl)
@@ -141,13 +143,13 @@ export class MainSettingTab extends PluginSettingTab {
 			.setDesc(this.getTranslation("BIBLE_EDITION_DESC"))
 			.addToggle((Boolean) =>
 				Boolean.setValue(
-					this.plugin.settings.bibleEdition == "nwt" ? false : true
+					this.plugin.settings.bibleEdition == "nwt" ? false : true,
 				).onChange(async (value) => {
 					this.plugin.settings.bibleEdition = value
 						? "nwtsty"
 						: "nwt";
 					await this.plugin.saveSettings();
-				})
+				}),
 			);
 
 		new Setting(containerEl)
@@ -159,26 +161,26 @@ export class MainSettingTab extends PluginSettingTab {
 			.setDesc(this.getTranslation("CAPITALIZE_FIRST_CHARACTER_DESC"))
 			.addToggle((Boolean) =>
 				Boolean.setValue(
-					this.plugin.settings.capitalizeFirstCharBibleBookName
+					this.plugin.settings.capitalizeFirstCharBibleBookName,
 				).onChange(async (value) => {
 					this.plugin.settings.capitalizeFirstCharBibleBookName =
 						value;
 					await this.plugin.saveSettings();
-				})
+				}),
 			);
 
 		new Setting(containerEl)
 			.setName(this.getTranslation("ADD_SPACE_BIBLE_BOOK_NUMBER_NAME"))
 			.setDesc(
-				this.getTranslation("ADD_SPACE_BIBLE_BOOK_NUMBER_NAME_DESC")
+				this.getTranslation("ADD_SPACE_BIBLE_BOOK_NUMBER_NAME_DESC"),
 			)
 			.addToggle((Boolean) =>
 				Boolean.setValue(
-					this.plugin.settings.addSpaceAfterBibleBookNumber
+					this.plugin.settings.addSpaceAfterBibleBookNumber,
 				).onChange(async (value) => {
 					this.plugin.settings.addSpaceAfterBibleBookNumber = value;
 					await this.plugin.saveSettings();
-				})
+				}),
 			);
 
 		new Setting(containerEl)
@@ -189,8 +191,8 @@ export class MainSettingTab extends PluginSettingTab {
 					async (value) => {
 						this.plugin.settings.makeBold = value;
 						await this.plugin.saveSettings();
-					}
-				)
+					},
+				),
 			);
 
 		new Setting(containerEl)
@@ -201,8 +203,8 @@ export class MainSettingTab extends PluginSettingTab {
 					async (value) => {
 						this.plugin.settings.makeItalic = value;
 						await this.plugin.saveSettings();
-					}
-				)
+					},
+				),
 			);
 
 		new Setting(containerEl)
@@ -215,7 +217,7 @@ export class MainSettingTab extends PluginSettingTab {
 						this.plugin.settings.linkPrefix = value;
 						await this.plugin.saveSettings();
 					})
-					.setPlaceholder(this.getTranslation("PREFIX_HERE"))
+					.setPlaceholder(this.getTranslation("PREFIX_HERE")),
 			)
 			.addExtraButton((b) => {
 				b.setIcon("rotate-ccw")
@@ -237,7 +239,7 @@ export class MainSettingTab extends PluginSettingTab {
 						this.plugin.settings.linkSuffix = value;
 						await this.plugin.saveSettings();
 					})
-					.setPlaceholder(this.getTranslation("SUFFIX_HERE"))
+					.setPlaceholder(this.getTranslation("SUFFIX_HERE")),
 			)
 			.addExtraButton((b) => {
 				b.setIcon("rotate-ccw")
