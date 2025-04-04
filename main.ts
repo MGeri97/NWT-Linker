@@ -102,8 +102,8 @@ export default class BibleLinkerPro extends Plugin {
 								convertBibleTextToJWLibraryLink(editor);
 							});
 					});
-				}
-			)
+				},
+			),
 		);
 
 		const convertBibleTextToJWLibraryLink = (editor: Editor) => {
@@ -930,7 +930,7 @@ export default class BibleLinkerPro extends Plugin {
 		this.settings = Object.assign(
 			{},
 			DEFAULT_SETTINGS,
-			await this.loadData()
+			await this.loadData(),
 		);
 	}
 
