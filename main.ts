@@ -896,6 +896,8 @@ export default class BibleLinkerPro extends Plugin {
 					editor.replaceSelection(input);
 				}
 
+				console.error("Invalid input: ", error);
+
 				//Show error modal
 				errorModal.setText(this.getTranslation("INVALID_INPUT"));
 				errorModal.open();
