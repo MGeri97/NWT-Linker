@@ -1,18 +1,8 @@
 import { MainSettingTab } from "settings";
-// import { ExampleView, VIEW_TYPE_EXAMPLE } from "ExampleView";
 import * as translations from "translations.json";
 import { moment } from "obsidian";
 
-import {
-	App,
-	Editor,
-	MarkdownView,
-	Modal,
-	Plugin,
-	// Menu,
-	// Notice,
-	// WorkspaceLeaf,
-} from "obsidian";
+import { App, Editor, MarkdownView, Modal, Plugin } from "obsidian";
 
 interface PluginSettings {
 	pluginLanguage: string;
@@ -47,7 +37,7 @@ const DEFAULT_SETTINGS: Partial<PluginSettings> = {
 const translationsTyped: { [key: string]: { [key: string]: string } } =
 	translations;
 
-export default class BibleLinkerPro extends Plugin {
+export default class NwtLinker extends Plugin {
 	settings: PluginSettings;
 
 	//Set current plugin version
@@ -77,7 +67,7 @@ export default class BibleLinkerPro extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		console.log("Bible linker Pro V." + this.currentPluginVersion);
+		console.log("NWT linker v." + this.currentPluginVersion);
 
 		if (this.settings.pluginLanguage == "?") {
 			if (translationsTyped.hasOwnProperty(moment.locale())) {
@@ -102,8 +92,8 @@ export default class BibleLinkerPro extends Plugin {
 								convertBibleTextToJWLibraryLink(editor);
 							});
 					});
-				}
-			)
+				},
+			),
 		);
 
 		const convertBibleTextToJWLibraryLink = (editor: Editor) => {
@@ -839,6 +829,17 @@ export default class BibleLinkerPro extends Plugin {
 					}
 				}
 
+				if (bibleBookLong == undefined) {
+					//If an error occurs, replace text with initial input
+					if (input != null) {
+						editor.replaceSelection(input);
+					}
+
+					errorModal.setText(this.getTranslation("INVALID_INPUT"));
+					errorModal.open();
+					return;
+				}
+
 				let chapter = input.split(" ")[1];
 				chapter = chapter.split(":")[0];
 				if (chapter.length == 1) {
@@ -966,6 +967,8 @@ export default class BibleLinkerPro extends Plugin {
 					editor.replaceSelection(input);
 				}
 
+				console.error("Invalid input: ", error);
+
 				//Show error modal
 				errorModal.setText(this.getTranslation("INVALID_INPUT"));
 				errorModal.open();
@@ -1000,7 +1003,7 @@ export default class BibleLinkerPro extends Plugin {
 		this.settings = Object.assign(
 			{},
 			DEFAULT_SETTINGS,
-			await this.loadData()
+			await this.loadData(),
 		);
 	}
 
@@ -1010,7 +1013,7 @@ export default class BibleLinkerPro extends Plugin {
 }
 
 class ErrorModal extends Modal {
-	plugin: BibleLinkerPro;
+	plugin: NwtLinker;
 
 	constructor(app: App) {
 		super(app);
@@ -1032,7 +1035,7 @@ class ErrorModal extends Modal {
 }
 
 class UpdateNotesModal extends Modal {
-	plugin: BibleLinkerPro;
+	plugin: NwtLinker;
 
 	currentPluginVersion: string;
 
@@ -1050,7 +1053,7 @@ class UpdateNotesModal extends Modal {
 
 		contentEl.createEl("h2", {
 			text:
-				"🎉 New update for Bible linker Pro (" +
+				"🎉 New update for NWT Linker (" +
 				this.currentPluginVersion +
 				")",
 		});
@@ -1059,7 +1062,7 @@ class UpdateNotesModal extends Modal {
 
 		//Changelog
 		const splashScreenText = `
-		-   Fixed wtLocale for Ukrainian language by @gaborishka
+		-   Forked from Bible Linker
 		`;
 		const splayScreenList = splashScreenText.split("\n");
 

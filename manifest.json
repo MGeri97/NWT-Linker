@@ -1,10 +1,10 @@
 {
-	"id": "bible-linker-pro",
-	"name": "Bible linker Pro",
-	"version": "1.7.3",
+	"id": "nwt-linker",
+	"name": "NWT Linker",
+	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Convert Bible texts to JW Library links.",
-	"author": "Floydv149",
-	"authorUrl": "https://floydv.it.nf",
+	"description": "Convert Bible verses to New World Translation Bible links.",
+	"author": "MGeri97",
+	"authorUrl": "https://github.com/MGeri97",
 	"isDesktopOnly": false
 }
