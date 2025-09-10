@@ -44,18 +44,16 @@ export class MainSettingTab extends PluginSettingTab {
 			.setHeading();
 
 		containerEl.createEl("p", {
-			text:
-				this.getTranslation("CREATED_WITH_LOVE") +
-				" Floydv149, MGeri97",
+			text: this.getTranslation("CREATED_WITH_LOVE") + " Floydv149",
 		});
 		containerEl.createEl("a", {
 			text: this.getTranslation("DOCUMENTATION"),
-			href: "https://github.com/MGeri97/NWT-Linker/blob/main/README.md",
+			href: "https://github.com/Floydv149/bibleLinkerPro/blob/main/README.md",
 		});
 		containerEl.createEl("br");
 		containerEl.createEl("a", {
 			text: this.getTranslation("CHANGELOG"),
-			href: "https://github.com/MGeri97/NWT-Linker/blob/main/CHANGELOG.MD",
+			href: "https://github.com/Floydv149/bibleLinkerPro/blob/main/CHANGELOG.MD",
 		});
 		containerEl.createEl("br");
 		containerEl.createEl("br");
@@ -70,6 +68,7 @@ export class MainSettingTab extends PluginSettingTab {
 					.addOption("nl", "Nederlands")
 					.addOption("de", "Deutsch")
 					.addOption("pt-br", "Português (Brasil)")
+					.addOption("pt", "Português (Portugal)")
 					.addOption("es", "Español")
 					.addOption("fi", "Finnish")
 					.addOption("ua", "Українська")
@@ -137,6 +136,30 @@ export class MainSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					},
 				),
+			);
+
+		new Setting(containerEl)
+			.setName(this.getTranslation("INSERT_QUOTATION"))
+			.setDesc(this.getTranslation("INSERT_QUOTATION_DESC"))
+			.addToggle((Boolean) =>
+				Boolean.setValue(this.plugin.settings.insertQuote).onChange(
+					async (value) => {
+						this.plugin.settings.insertQuote = value;
+						await this.plugin.saveSettings();
+					},
+				),
+			);
+
+		new Setting(containerEl)
+			.setName(this.getTranslation("SHOW_QUOTATION_VERSE"))
+			.setDesc(this.getTranslation("SHOW_QUOTATION_VERSE_DESC"))
+			.addToggle((Boolean) =>
+				Boolean.setValue(
+					this.plugin.settings.showQuotationVerse,
+				).onChange(async (value) => {
+					this.plugin.settings.showQuotationVerse = value;
+					await this.plugin.saveSettings();
+				}),
 			);
 
 		new Setting(containerEl)
@@ -247,6 +270,50 @@ export class MainSettingTab extends PluginSettingTab {
 					.setTooltip(this.getTranslation("CLEAR_LINK_SUFFIX"))
 					.onClick(async () => {
 						this.plugin.settings.linkSuffix = "";
+						await this.plugin.saveSettings();
+						this.display();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName(this.getTranslation("QUOTATION_PREFIX"))
+			.setDesc(this.getTranslation("QUOTATION_PREFIX_DESC"))
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.quotationPrefix)
+					.onChange(async (value) => {
+						this.plugin.settings.quotationPrefix = value;
+						await this.plugin.saveSettings();
+					})
+					.setPlaceholder(this.getTranslation("PREFIX_HERE")),
+			)
+			.addExtraButton((b) => {
+				b.setIcon("rotate-ccw")
+					.setTooltip(this.getTranslation("CLEAR_QUOTATION_PREFIX"))
+					.onClick(async () => {
+						this.plugin.settings.quotationPrefix = "";
+						await this.plugin.saveSettings();
+						this.display();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName(this.getTranslation("QUOTATION_SUFFIX"))
+			.setDesc(this.getTranslation("QUOTATION_SUFFIX_DESC"))
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.quotationSuffix)
+					.onChange(async (value) => {
+						this.plugin.settings.quotationSuffix = value;
+						await this.plugin.saveSettings();
+					})
+					.setPlaceholder(this.getTranslation("SUFFIX_HERE")),
+			)
+			.addExtraButton((b) => {
+				b.setIcon("rotate-ccw")
+					.setTooltip(this.getTranslation("CLEAR_QUOTATION_SUFFIX"))
+					.onClick(async () => {
+						this.plugin.settings.quotationSuffix = "";
 						await this.plugin.saveSettings();
 						this.display();
 					});
