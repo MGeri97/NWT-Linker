@@ -32,7 +32,9 @@
 		"CLEAR_LINK_SUFFIX": "Clear link suffix",
 		"INVALID_INPUT": "Invalid Bible text input! Before you execute this command you need to select a valid Bible text like: '1 th 1:3-8'.",
 		"AUTO_OPEN_LINK": "Automatically open generated link",
-		"AUTO_OPEN_LINK_DESC": "Automatically opens generated links in JW Library."
+		"AUTO_OPEN_LINK_DESC": "Automatically opens generated links in JW Library.",
+		"INSERT_QUOTATION": "Insert quotation from New World Translation",
+		"INSERT_QUOTATION_DESC": "Inserts a quotation from the New World Translation, requires internet connection"	
 	},
 	"nl": {
 		"ABOUT": "Over",
@@ -312,6 +314,8 @@
 		"CLEAR_LINK_SUFFIX": "Link utótag törlése",
 		"INVALID_INPUT": "Érvénytelen bibliai szövegbevitel! A parancs végrehajtása előtt ki kell választania egy érvényes bibliai szöveget, például: '1 ti 1:3-8'.",
 		"AUTO_OPEN_LINK": "Automatikusan megnyitja a generált linket",
-		"AUTO_OPEN_LINK_DESC": "Automatikusan megnyitja a generált linkeket a JW Library alkalmazásban."
+		"AUTO_OPEN_LINK_DESC": "Automatikusan megnyitja a generált linkeket a JW Library alkalmazásban.",
+		"INSERT_QUOTATION": "Idézet beszúrása az Új Világ Fordításból",
+		"INSERT_QUOTATION_DESC": "Idézet beillesztése az Új Világ Fordításból, internetkapcsolat szükséges"
 	}
 }
