@@ -44,8 +44,7 @@ const context = await esbuild.context({
 		copyStaticFiles({
 			src: "manifest.json",
 			dest: "out/manifest.json",
-			flat: true,
-			filter: true,
+			flat: true
 		}),
 	],
 });

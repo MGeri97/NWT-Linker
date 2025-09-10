@@ -1,8 +1,16 @@
 import { MainSettingTab } from "settings";
+// import { ExampleView, VIEW_TYPE_EXAMPLE } from "ExampleView";
 import * as translations from "translations.json";
-import { moment } from "obsidian";
+import { moment, Notice } from "obsidian";
+import { fetchVerse } from "quotation";
 
-import { App, Editor, MarkdownView, Modal, Plugin } from "obsidian";
+import {
+	App,
+	Editor,
+	MarkdownView,
+	Modal,
+	Plugin,
+} from "obsidian";
 
 interface PluginSettings {
 	pluginLanguage: string;
@@ -12,6 +20,10 @@ interface PluginSettings {
 	addSpaceAfterBibleBookNumber: boolean;
 	autoGetLine: boolean;
 	autoOpenLink: boolean;
+	insertQuote: boolean;
+	showQuotationVerse: boolean;
+	quotationPrefix: string;
+	quotationSuffix: string;
 	makeBold: boolean;
 	makeItalic: boolean;
 	linkPrefix: string;
@@ -27,12 +39,22 @@ const DEFAULT_SETTINGS: Partial<PluginSettings> = {
 	addSpaceAfterBibleBookNumber: true,
 	autoGetLine: false,
 	autoOpenLink: false,
+	insertQuote: false,
+	showQuotationVerse: true,
+	quotationPrefix: ">",
+	quotationSuffix: "",
 	makeBold: false,
 	makeItalic: false,
 	linkPrefix: "",
 	linkSuffix: "",
 	lastVersion: "",
 };
+
+enum EditorAction {
+	OpenUrl,
+	InsertUrl,
+	InsertQuotation,
+}
 
 const translationsTyped: { [key: string]: { [key: string]: string } } =
 	translations;
@@ -89,14 +111,86 @@ export default class NwtLinker extends Plugin {
 						item.setTitle("Convert Bible text to JW Library link")
 							.setIcon("link")
 							.onClick(async () => {
-								convertBibleTextToJWLibraryLink(editor);
+								convertBibleTextToJWLibraryLink(
+									editor,
+									EditorAction.InsertUrl,
+								);
 							});
 					});
 				},
 			),
 		);
 
-		const convertBibleTextToJWLibraryLink = (editor: Editor) => {
+		this.registerEvent(
+			this.app.workspace.on(
+				"editor-menu",
+				(menu, editor, view: MarkdownView) => {
+					menu.addItem((item) => {
+						item.setTitle("Open Bible text in JW Library")
+							.setIcon("link")
+							.onClick(async () => {
+								convertBibleTextToJWLibraryLink(
+									editor,
+									EditorAction.OpenUrl,
+								);
+							});
+					});
+				},
+			),
+		);
+		this.registerEvent(
+			this.app.workspace.on(
+				"editor-menu",
+				(menu, editor, view: MarkdownView) => {
+					menu.addItem((item) => {
+						item.setTitle("Insert quotation from Bible")
+							.setIcon("link")
+							.onClick(async () => {
+								convertBibleTextToJWLibraryLink(
+									editor,
+									EditorAction.InsertQuotation,
+								);
+							});
+					});
+				},
+			),
+		);
+
+		const insertBibleQuotation = async (
+			editor: Editor,
+			linkOutput: string,
+			jwEndpoint: string,
+		) => {
+			const cur = editor.getCursor(); // { line, ch }
+			const lineLen = editor.getLine(cur.line).length;
+			let text;
+			try {
+				// Insert a newline at end of current line, then move cursor to new empty line
+				text = await fetchVerse(
+					linkOutput,
+					this.settings.showQuotationVerse,
+					jwEndpoint,
+				);
+				editor.replaceRange(
+					"\n" +
+					this.settings.quotationPrefix +
+					text +
+					this.settings.quotationSuffix +
+					"\n",
+					{
+						line: cur.line,
+						ch: lineLen,
+					},
+				);
+			} catch (error) {
+				new Notice(this.getTranslation("FETCH_ERROR"));
+			}
+		};
+
+		const convertBibleTextToJWLibraryLink = async (
+			editor: Editor,
+			action: EditorAction,
+		) => {
 			let input;
 			try {
 				if (this.settings.autoGetLine) {
@@ -113,6 +207,8 @@ export default class NwtLinker extends Plugin {
 				input = input.trim();
 
 				const wtLocaleEN = "E";
+				const jwEndpointEN =
+					"https://www.jw.org/en/library/bible/study-bible/books/json/html/";
 				const bibleBooksEN = [
 					["ge", "gen", "genesis"],
 					["ex", "exodus"],
@@ -381,6 +477,76 @@ export default class NwtLinker extends Plugin {
 					["2ti", "2tim", "2timóteo"],
 					["tit", "tito"],
 					["flm", "filêm", "filêmon"],
+					["he", "heb", "hebreus"],
+					["tg", "tia", "tiago"],
+					["1pe", "1ped", "1pedro"],
+					["2pe", "2ped", "2pedro"],
+					["1jo", "1joão"],
+					["2jo", "2joão"],
+					["3jo", "3joão"],
+					["ju", "judas"],
+					["ap", "apo", "apocalipse"],
+				];
+
+				const wtLocalePt = "TPO";
+				const bibleBooksPt = [
+					["ge", "gén", "gênesis"],
+					["ex", "êx", "êxo", "êxodo"],
+					["le", "lev", "levítico"],
+					["n", "núm", "números"],
+					["de", "deu", "deuteronómio"],
+					["jos", "josué"],
+					["jz", "juí", "juízes"],
+					["ru", "rute"],
+					["1sa", "1sam", "1samuel"],
+					["2sa", "2sam", "2samuel"],
+					["1rs", "1reis"],
+					["2rs", "2reis"],
+					["1cr", "1crô", "1crónicas"],
+					["2cr", "2crô", "2crónicas"],
+					["esd", "esd", "esdras"],
+					["ne", "nee", "neemias"],
+					["est", "ester"],
+					["jó"],
+					["sal", "salmos"],
+					["pr", "pro", "provérbios"],
+					["ec", "ecl", "eclesiastes"],
+					["cân", "cântico de salomão"],
+					["is", "isa", "isaías"],
+					["je", "jer", "jeremias"],
+					["la", "lam", "lamentações"],
+					["ez", "eze", "ezequiel"],
+					["da", "dan", "daniel"],
+					["os", "ose", "oseias"],
+					["jl", "joel"],
+					["am", "amós"],
+					["ob", "obd", "obadias"],
+					["jon", "jonas"],
+					["miq", "miq", "miqueias"],
+					["na", "naum"],
+					["hab", "habacuque"],
+					["sof", "sofonias"],
+					["ag", "ageu"],
+					["za", "zac", "zacarias"],
+					["mal", "malaquias"],
+					["mt", "mat", "mateus"],
+					["mr", "mar", "marcos"],
+					["lu", "luc", "lucas"],
+					["jo", "joão"],
+					["at", "atos"],
+					["ro", "rom", "romanos"],
+					["1co", "1cor", "1coríntios"],
+					["2co", "2cor", "2coríntios"],
+					["gál", "gálatas"],
+					["ef", "efé", "efésios"],
+					["fil", "filipenses"],
+					["col", "colossenses"],
+					["1te", "1tes", "1tessalonicenses"],
+					["2te", "2tes", "2tessalonicenses"],
+					["1ti", "1tim", "1timóteo"],
+					["2ti", "2tim", "2timóteo"],
+					["tit", "tito"],
+					["flm", "filêm", "filémon"],
 					["he", "heb", "hebreus"],
 					["tg", "tia", "tiago"],
 					["1pe", "1ped", "1pedro"],
@@ -699,8 +865,10 @@ export default class NwtLinker extends Plugin {
 					["юд", "юди", "юда"],
 					["об", "обявл", "одкровення", "об'явлення"],
 				];
-				
+
 				const wtLocaleHU = "H";
+				const jwEndpointHU =
+					"https://www.jw.org/hu/konyvtar/biblia/magyarazatos-biblia/konyvek/json/html/";
 				const bibleBooksHU = [
 					["1mó", "1mo", "1mózes"],
 					["2mó", "2mo", "2mózes"],
@@ -771,6 +939,7 @@ export default class NwtLinker extends Plugin {
 				];
 
 				let wtLocale = wtLocaleEN;
+				let jwEndpoint = jwEndpointEN;
 				let bibleBooks = bibleBooksEN;
 
 				switch (this.settings.pluginLanguage) {
@@ -785,6 +954,10 @@ export default class NwtLinker extends Plugin {
 					case "pt-br":
 						wtLocale = wtLocalePtBr;
 						bibleBooks = bibleBooksPtBr;
+						break;
+					case "pt":
+						wtLocale = wtLocalePt;
+						bibleBooks = bibleBooksPt;
 						break;
 					case "de":
 						wtLocale = wtLocaleDE;
@@ -801,6 +974,11 @@ export default class NwtLinker extends Plugin {
 					case "ua":
 						wtLocale = wtLocaleUA;
 						bibleBooks = bibleBooksUA;
+						break;
+					case "hu":
+						wtLocale = wtLocaleHU;
+						jwEndpoint = jwEndpointHU;
+						bibleBooks = bibleBooksHU;
 						break;
 				}
 
@@ -956,10 +1134,27 @@ export default class NwtLinker extends Plugin {
 					this.settings.linkSuffix;
 
 				const link = `jwlibrary:///finder?srcid=jwlshare&wtlocale=${wtLocale}&prefer=lang&pub=${this.settings.bibleEdition}&bible=${linkOutput}`;
-				editor.replaceSelection("[" + renderOutput + "](" + link + ")");
 
-				if (this.settings.autoOpenLink) {
+				if (action == EditorAction.InsertUrl) {
+					editor.replaceSelection(
+						"[" + renderOutput + "](" + link + ")",
+					);
+				}
+
+				if (
+					(action == EditorAction.InsertUrl &&
+						this.settings.autoOpenLink) ||
+					action == EditorAction.OpenUrl
+				) {
 					window.open(link);
+				}
+
+				if (
+					(action != EditorAction.OpenUrl &&
+						this.settings.insertQuote) ||
+					action == EditorAction.InsertQuotation
+				) {
+					insertBibleQuotation(editor, linkOutput, jwEndpoint);
 				}
 			} catch (error) {
 				//If an error occurs, replace text with initial input
@@ -967,20 +1162,37 @@ export default class NwtLinker extends Plugin {
 					editor.replaceSelection(input);
 				}
 
-				console.error("Invalid input: ", error);
-
 				//Show error modal
 				errorModal.setText(this.getTranslation("INVALID_INPUT"));
 				errorModal.open();
 			}
 		};
 
-		//Add editor command that can perform some operation on the current editor instance
+		//Add editor commands
 		this.addCommand({
 			id: "convert-Bible-text-to-JW-Library-link",
 			name: "Convert Bible text to JW Library link",
 			editorCallback: (editor: Editor, view: MarkdownView) => {
-				convertBibleTextToJWLibraryLink(editor);
+				convertBibleTextToJWLibraryLink(editor, EditorAction.InsertUrl);
+			},
+		});
+
+		this.addCommand({
+			id: "open-Bible-text-in-JW-Library",
+			name: "Open Bible text in JW Library",
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				convertBibleTextToJWLibraryLink(editor, EditorAction.OpenUrl);
+			},
+		});
+
+		this.addCommand({
+			id: "insert-quotation-from-bible",
+			name: "Insert quotation from Bible",
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				convertBibleTextToJWLibraryLink(
+					editor,
+					EditorAction.InsertQuotation,
+				);
 			},
 		});
 
@@ -997,7 +1209,7 @@ export default class NwtLinker extends Plugin {
 		}
 	}
 
-	onunload() {}
+	onunload() { }
 
 	async loadSettings() {
 		this.settings = Object.assign(
@@ -1026,7 +1238,7 @@ class ErrorModal extends Modal {
 		});
 	}
 
-	onOpen() {}
+	onOpen() { }
 
 	onClose() {
 		const { contentEl } = this;
@@ -1053,7 +1265,7 @@ class UpdateNotesModal extends Modal {
 
 		contentEl.createEl("h2", {
 			text:
-				"🎉 New update for NWT Linker (" +
+				"🎉 New update for Bible linker Pro (" +
 				this.currentPluginVersion +
 				")",
 		});
@@ -1064,13 +1276,16 @@ class UpdateNotesModal extends Modal {
 		const splashScreenText = `
 		-   Forked from Bible Linker
 		`;
-		const splayScreenList = splashScreenText.split("\n");
+		const splayScreenList = splashScreenText
+			.replace(/-   /g, "")
+			.split("\n");
 
 		for (let i = 0; i < splayScreenList.length; i++) {
-			if (splayScreenList[i] != "") {
-				contentEl.createEl("p", {
+			if (splayScreenList[i].length > 2) {
+				contentEl.createEl("li", {
 					text: splayScreenList[i],
 				});
+				contentEl.createEl("br");
 			}
 		}
 
