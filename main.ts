@@ -1274,7 +1274,8 @@ class UpdateNotesModal extends Modal {
 
 		//Changelog
 		const splashScreenText = `
-		-   Forked from Bible Linker
+		-   Forked from Bible Linker Pro
+		-   Added online quotation support
 		`;
 		const splayScreenList = splashScreenText
 			.replace(/-   /g, "")
