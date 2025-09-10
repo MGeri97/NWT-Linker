@@ -44,16 +44,16 @@ export class MainSettingTab extends PluginSettingTab {
 			.setHeading();
 
 		containerEl.createEl("p", {
-			text: this.getTranslation("CREATED_WITH_LOVE") + " Floydv149",
+			text: this.getTranslation("CREATED_WITH_LOVE") + " MGeri97, Martin, Floydv149",
 		});
 		containerEl.createEl("a", {
 			text: this.getTranslation("DOCUMENTATION"),
-			href: "https://github.com/Floydv149/bibleLinkerPro/blob/main/README.md",
+			href: "https://github.com/MGeri97/NWT-Linker/blob/main/README.md",
 		});
 		containerEl.createEl("br");
 		containerEl.createEl("a", {
 			text: this.getTranslation("CHANGELOG"),
-			href: "https://github.com/Floydv149/bibleLinkerPro/blob/main/CHANGELOG.MD",
+			href: "https://github.com/MGeri97/NWT-Linker/blob/main/CHANGELOG.MD",
 		});
 		containerEl.createEl("br");
 		containerEl.createEl("br");
