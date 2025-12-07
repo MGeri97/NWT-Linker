@@ -1,6 +1,6 @@
-import NwtLinker from "main";
+import NwtLinker from "src/main";
 import { App, PluginSettingTab, Setting } from "obsidian";
-import * as translations from "translations.json";
+import * as translations from "src/translations.json";
 import { moment } from "obsidian";
 
 const translationsTyped: { [key: string]: { [key: string]: string } } =
@@ -44,7 +44,9 @@ export class MainSettingTab extends PluginSettingTab {
 			.setHeading();
 
 		containerEl.createEl("p", {
-			text: this.getTranslation("CREATED_WITH_LOVE") + " MGeri97, Martin, Floydv149",
+			text:
+				this.getTranslation("CREATED_WITH_LOVE") +
+				" MGeri97, Martin, Floydv149",
 		});
 		containerEl.createEl("a", {
 			text: this.getTranslation("DOCUMENTATION"),

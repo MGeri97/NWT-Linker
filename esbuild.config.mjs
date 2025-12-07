@@ -15,7 +15,7 @@ const context = await esbuild.context({
 	banner: {
 		js: banner,
 	},
-	entryPoints: ["main.ts"],
+	entryPoints: ["src/main.ts"],
 	bundle: true,
 	external: [
 		"obsidian",
@@ -44,7 +44,7 @@ const context = await esbuild.context({
 		copyStaticFiles({
 			src: "manifest.json",
 			dest: "out/manifest.json",
-			flat: true
+			flat: true,
 		}),
 	],
 });

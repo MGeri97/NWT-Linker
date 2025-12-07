@@ -1,16 +1,10 @@
-import { MainSettingTab } from "settings";
+import { MainSettingTab } from "src/settings";
 // import { ExampleView, VIEW_TYPE_EXAMPLE } from "ExampleView";
-import * as translations from "translations.json";
+import * as translations from "src/translations.json";
 import { moment, Notice } from "obsidian";
-import { fetchVerse } from "quotation";
+import { fetchVerse } from "src/quotation";
 
-import {
-	App,
-	Editor,
-	MarkdownView,
-	Modal,
-	Plugin,
-} from "obsidian";
+import { App, Editor, MarkdownView, Modal, Plugin } from "obsidian";
 
 interface PluginSettings {
 	pluginLanguage: string;
@@ -173,16 +167,16 @@ export default class NwtLinker extends Plugin {
 				);
 				editor.replaceRange(
 					"\n" +
-					this.settings.quotationPrefix +
-					text +
-					this.settings.quotationSuffix +
-					"\n",
+						this.settings.quotationPrefix +
+						text +
+						this.settings.quotationSuffix +
+						"\n",
 					{
 						line: cur.line,
 						ch: lineLen,
 					},
 				);
-			} catch (error) {
+			} catch {
 				new Notice(this.getTranslation("FETCH_ERROR"));
 			}
 		};
@@ -1156,7 +1150,7 @@ export default class NwtLinker extends Plugin {
 				) {
 					insertBibleQuotation(editor, linkOutput, jwEndpoint);
 				}
-			} catch (error) {
+			} catch {
 				//If an error occurs, replace text with initial input
 				if (input != null) {
 					editor.replaceSelection(input);
@@ -1209,7 +1203,7 @@ export default class NwtLinker extends Plugin {
 		}
 	}
 
-	onunload() { }
+	onunload() {}
 
 	async loadSettings() {
 		this.settings = Object.assign(
@@ -1238,7 +1232,7 @@ class ErrorModal extends Modal {
 		});
 	}
 
-	onOpen() { }
+	onOpen() {}
 
 	onClose() {
 		const { contentEl } = this;
@@ -1278,7 +1272,7 @@ class UpdateNotesModal extends Modal {
 		-   Added online quotation support
 		`;
 		const splayScreenList = splashScreenText
-			.replace(/-   /g, "")
+			.replace(/- {3}/g, "")
 			.split("\n");
 
 		for (let i = 0; i < splayScreenList.length; i++) {
