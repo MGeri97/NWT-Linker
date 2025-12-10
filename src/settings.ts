@@ -72,9 +72,9 @@ export class MainSettingTab extends PluginSettingTab {
 					.addOption("fr", "Français")
 					.addOption("nl", "Nederlands")
 					.addOption("de", "Deutsch")
-					// eslint-disable-next-line obsidianmd/ui/sentence-case
+					// eslint-disable-next-line obsidianmd/ui/sentence-case -- This contains the name of a Country which requires capitalization.
 					.addOption("pt-br", "Português (Brasil)")
-					// eslint-disable-next-line obsidianmd/ui/sentence-case
+					// eslint-disable-next-line obsidianmd/ui/sentence-case -- This contains the name of a Country which requires capitalization.
 					.addOption("pt", "Português (Portugal)")
 					.addOption("es", "Español")
 					.addOption("fi", "Finnish")

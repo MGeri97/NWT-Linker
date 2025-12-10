@@ -1,5 +1,4 @@
 import { MainSettingTab } from "src/settings";
-// import { ExampleView, VIEW_TYPE_EXAMPLE } from "ExampleView";
 import * as translations from "src/translations.json";
 import { moment, Notice } from "obsidian";
 import { fetchVerse } from "src/quotation";
@@ -110,7 +109,7 @@ export default class NwtLinker extends Plugin {
 				"editor-menu",
 				(menu, editor, view: MarkdownView) => {
 					menu.addItem((item) => {
-						// eslint-disable-next-line obsidianmd/ui/sentence-case
+						// eslint-disable-next-line obsidianmd/ui/sentence-case -- This contains the name of an external application
 						item.setTitle("Convert Bible text to JW Library link")
 							.setIcon("link")
 							.onClick(async () => {
@@ -129,7 +128,7 @@ export default class NwtLinker extends Plugin {
 				"editor-menu",
 				(menu, editor, view: MarkdownView) => {
 					menu.addItem((item) => {
-						// eslint-disable-next-line obsidianmd/ui/sentence-case
+						// eslint-disable-next-line obsidianmd/ui/sentence-case -- This contains the name of an external application
 						item.setTitle("Open Bible text in JW Library")
 							.setIcon("link")
 							.onClick(async () => {
@@ -147,7 +146,7 @@ export default class NwtLinker extends Plugin {
 				"editor-menu",
 				(menu, editor, view: MarkdownView) => {
 					menu.addItem((item) => {
-						// eslint-disable-next-line obsidianmd/ui/sentence-case
+						// eslint-disable-next-line obsidianmd/ui/sentence-case -- This contains the name of a Book's title therefore should be capitalized
 						item.setTitle("Insert quotation from Bible")
 							.setIcon("link")
 							.onClick(async () => {
@@ -1176,7 +1175,7 @@ export default class NwtLinker extends Plugin {
 		//Add editor commands
 		this.addCommand({
 			id: "convert-Bible-text-to-JW-Library-link",
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
+			// eslint-disable-next-line obsidianmd/ui/sentence-case -- This contains the name of an external application
 			name: "Convert Bible text to JW Library link",
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				await convertBibleTextToJWLibraryLink(
@@ -1188,7 +1187,7 @@ export default class NwtLinker extends Plugin {
 
 		this.addCommand({
 			id: "open-Bible-text-in-JW-Library",
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
+			// eslint-disable-next-line obsidianmd/ui/sentence-case -- This contains the name of an external application
 			name: "Open Bible text in JW Library",
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				await convertBibleTextToJWLibraryLink(
@@ -1200,7 +1199,7 @@ export default class NwtLinker extends Plugin {
 
 		this.addCommand({
 			id: "insert-quotation-from-bible",
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
+			// eslint-disable-next-line obsidianmd/ui/sentence-case -- This contains the name of a Book's title therefore should be capitalized
 			name: "Insert quotation from Bible",
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				await convertBibleTextToJWLibraryLink(
