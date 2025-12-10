@@ -25,7 +25,7 @@ interface PluginSettings {
 	lastVersion: string;
 }
 
-const DEFAULT_SETTINGS: Partial<PluginSettings> = {
+const DEFAULT_SETTINGS: PluginSettings = {
 	pluginLanguage: "?",
 	bibleEdition: "nwtsty",
 	expandBibleBookName: true,
@@ -73,7 +73,10 @@ export default class NwtLinker extends Plugin {
 	getLangBase(): { [key: string]: string } {
 		const pluginLanguage = this.settings.pluginLanguage;
 		const langBase: { [key: string]: string } =
-			translationsTyped.hasOwnProperty(pluginLanguage)
+			Object.prototype.hasOwnProperty.call(
+				translationsTyped,
+				pluginLanguage,
+			)
 				? translationsTyped[pluginLanguage]
 				: {};
 
@@ -83,10 +86,15 @@ export default class NwtLinker extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		console.log("NWT linker v." + this.currentPluginVersion);
+		console.debug("NWT linker v." + this.currentPluginVersion);
 
 		if (this.settings.pluginLanguage == "?") {
-			if (translationsTyped.hasOwnProperty(moment.locale())) {
+			if (
+				Object.prototype.hasOwnProperty.call(
+					translationsTyped,
+					moment.locale(),
+				)
+			) {
 				this.settings.pluginLanguage = moment.locale();
 			} else {
 				this.settings.pluginLanguage = "en";
@@ -102,10 +110,11 @@ export default class NwtLinker extends Plugin {
 				"editor-menu",
 				(menu, editor, view: MarkdownView) => {
 					menu.addItem((item) => {
+						// eslint-disable-next-line obsidianmd/ui/sentence-case
 						item.setTitle("Convert Bible text to JW Library link")
 							.setIcon("link")
 							.onClick(async () => {
-								convertBibleTextToJWLibraryLink(
+								await convertBibleTextToJWLibraryLink(
 									editor,
 									EditorAction.InsertUrl,
 								);
@@ -120,10 +129,11 @@ export default class NwtLinker extends Plugin {
 				"editor-menu",
 				(menu, editor, view: MarkdownView) => {
 					menu.addItem((item) => {
+						// eslint-disable-next-line obsidianmd/ui/sentence-case
 						item.setTitle("Open Bible text in JW Library")
 							.setIcon("link")
 							.onClick(async () => {
-								convertBibleTextToJWLibraryLink(
+								await convertBibleTextToJWLibraryLink(
 									editor,
 									EditorAction.OpenUrl,
 								);
@@ -137,10 +147,11 @@ export default class NwtLinker extends Plugin {
 				"editor-menu",
 				(menu, editor, view: MarkdownView) => {
 					menu.addItem((item) => {
+						// eslint-disable-next-line obsidianmd/ui/sentence-case
 						item.setTitle("Insert quotation from Bible")
 							.setIcon("link")
 							.onClick(async () => {
-								convertBibleTextToJWLibraryLink(
+								await convertBibleTextToJWLibraryLink(
 									editor,
 									EditorAction.InsertQuotation,
 								);
@@ -1148,7 +1159,7 @@ export default class NwtLinker extends Plugin {
 						this.settings.insertQuote) ||
 					action == EditorAction.InsertQuotation
 				) {
-					insertBibleQuotation(editor, linkOutput, jwEndpoint);
+					await insertBibleQuotation(editor, linkOutput, jwEndpoint);
 				}
 			} catch {
 				//If an error occurs, replace text with initial input
@@ -1165,25 +1176,34 @@ export default class NwtLinker extends Plugin {
 		//Add editor commands
 		this.addCommand({
 			id: "convert-Bible-text-to-JW-Library-link",
+			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			name: "Convert Bible text to JW Library link",
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				convertBibleTextToJWLibraryLink(editor, EditorAction.InsertUrl);
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				await convertBibleTextToJWLibraryLink(
+					editor,
+					EditorAction.InsertUrl,
+				);
 			},
 		});
 
 		this.addCommand({
 			id: "open-Bible-text-in-JW-Library",
+			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			name: "Open Bible text in JW Library",
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				convertBibleTextToJWLibraryLink(editor, EditorAction.OpenUrl);
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				await convertBibleTextToJWLibraryLink(
+					editor,
+					EditorAction.OpenUrl,
+				);
 			},
 		});
 
 		this.addCommand({
 			id: "insert-quotation-from-bible",
+			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			name: "Insert quotation from Bible",
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				convertBibleTextToJWLibraryLink(
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				await convertBibleTextToJWLibraryLink(
 					editor,
 					EditorAction.InsertQuotation,
 				);
@@ -1196,7 +1216,7 @@ export default class NwtLinker extends Plugin {
 		//Update notes modal
 		if (this.currentPluginVersion != this.settings.lastVersion) {
 			this.settings.lastVersion = this.currentPluginVersion;
-			this.saveSettings();
+			await this.saveSettings();
 			new UpdateNotesModal(this.app)
 				.receiveVersion(this.currentPluginVersion)
 				.open();
@@ -1206,11 +1226,8 @@ export default class NwtLinker extends Plugin {
 	onunload() {}
 
 	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			DEFAULT_SETTINGS,
-			await this.loadData(),
-		);
+		const data = (await this.loadData()) as PluginSettings | undefined;
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, data ?? {});
 	}
 
 	async saveSettings() {

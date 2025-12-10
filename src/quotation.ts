@@ -1,4 +1,5 @@
 import { requestUrl, RequestUrlParam } from "obsidian";
+import QuotationResponse from "./interface";
 
 export async function fetchVerse(
 	verseRange: string,
@@ -20,7 +21,16 @@ export async function fetchVerse(
 	} as RequestUrlParam);
 
 	const raw = res.text;
-	const data = JSON.parse(raw);
+
+	let data: QuotationResponse;
+	try {
+		data = JSON.parse(raw) as QuotationResponse;
+	} catch (e) {
+		console.error("Error parsing verse data JSON:", e);
+		return "";
+	}
+
+	console.debug("Fetched verse data:", data);
 
 	await Promise.resolve();
 
@@ -30,7 +40,7 @@ export async function fetchVerse(
 	}
 
 	const rangeKey = Object.keys(data.ranges)[0];
-	const text = stripVerseText(data.ranges[rangeKey].html, showVerseNum);
+	const text = stripVerseText(data.ranges[rangeKey].html ?? "", showVerseNum);
 
 	return text ?? "";
 }

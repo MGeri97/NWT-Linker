@@ -27,7 +27,10 @@ export class MainSettingTab extends PluginSettingTab {
 	getLangBase(): { [key: string]: string } {
 		const pluginLanguage = this.plugin.settings.pluginLanguage;
 		const langBase: { [key: string]: string } =
-			translationsTyped.hasOwnProperty(pluginLanguage)
+			Object.prototype.hasOwnProperty.call(
+				translationsTyped,
+				pluginLanguage,
+			)
 				? translationsTyped[pluginLanguage]
 				: {};
 
@@ -69,7 +72,9 @@ export class MainSettingTab extends PluginSettingTab {
 					.addOption("fr", "Français")
 					.addOption("nl", "Nederlands")
 					.addOption("de", "Deutsch")
+					// eslint-disable-next-line obsidianmd/ui/sentence-case
 					.addOption("pt-br", "Português (Brasil)")
+					// eslint-disable-next-line obsidianmd/ui/sentence-case
 					.addOption("pt", "Português (Portugal)")
 					.addOption("es", "Español")
 					.addOption("fi", "Finnish")
@@ -83,7 +88,8 @@ export class MainSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						if (value === "/") {
 							if (
-								translationsTyped.hasOwnProperty(
+								Object.prototype.hasOwnProperty.call(
+									translationsTyped,
 									moment.locale(),
 								)
 							) {
